@@ -1,6 +1,6 @@
 {
-  "name": "VibWave Rolamentos",
-  "short_name": "VibWave",
+  "name": "VibRol - Inspeção de Rolamentos",
+  "short_name": "VibRol",
   "description": "Inspeção Técnica de Rolamentos ISO 15243",
   "start_url": "./index.html",
   "scope": ".",
