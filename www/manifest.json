@@ -11,12 +11,12 @@
   "icons": [
     {
       "src": "logo_app.png",
-      "sizes": "192x192",
+      "sizes": "192x192 144x144 152x152",
       "type": "image/png"
     },
     {
       "src": "logo_app.png",
-      "sizes": "512x512",
+      "sizes": "512x512 384x384",
       "type": "image/png",
       "purpose": "any maskable"
     }
