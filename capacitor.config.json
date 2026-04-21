@@ -1,0 +1,8 @@
+{
+  "appId": "com.vibwave.rolamentos",
+  "appName": "VibWave Rolamentos",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
+}

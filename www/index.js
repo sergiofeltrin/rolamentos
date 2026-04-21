@@ -69,23 +69,33 @@ async function preparePDFData() {
     template.innerHTML = '';
     
     const formData = {
-        relatorioNumero: document.getElementById('relatorio-numero').value,
-        data: document.getElementById('data-elaboracao').value,
-        equipamento: document.getElementById('equipamento').value,
-        bioparque: document.getElementById('bioparque').value,
-        designacao: document.getElementById('designacao').value,
-        fabricante: document.getElementById('fabricante').value,
-        bucha: document.getElementById('bucha').value,
-        classe: document.getElementById('classe').value,
-        elaborador: document.getElementById('elaborado-por').value,
-        respTecnico: document.getElementById('responsavel-tecnico').value,
-        detalhesInspecao: document.getElementById('detalhes-inspecao').value,
-        sugestoesRecomendacoes: document.getElementById('sugestoes-recomendacoes').value,
-        condicao: document.getElementById('condicao').value,
-        condicaoTexto: document.querySelector('.light-btn.active span')?.textContent || '',
+        relatorioNumero: document.getElementById('relatorio-numero')?.value || '',
+        data: document.getElementById('data-elaboracao')?.value || '',
+        equipamento: document.getElementById('equipamento')?.value || '',
+        bioparque: document.getElementById('bioparque')?.value || '',
+        designacao: document.getElementById('designacao')?.value || '',
+        fabricante: document.getElementById('fabricante')?.value || '',
+        bucha: document.getElementById('bucha')?.value || '',
+        classe: document.getElementById('classe')?.value || '',
+        elaborador: document.getElementById('elaborado-por')?.value || '',
+        respTecnico: document.getElementById('responsavel-tecnico')?.value || '',
+        detalhesInspecao: document.getElementById('detalhes-inspecao')?.value || '',
+        sugestoesRecomendacoes: document.getElementById('sugestoes-recomendacoes')?.value || '',
+        condicao: document.getElementById('condicao')?.value || 'reutilizar',
+        condicaoTexto: document.getElementById('condicao')?.options[document.getElementById('condicao').selectedIndex]?.text || 'Aprovado',
         falhas: Array.from(document.querySelectorAll('input[name="falha"]:checked')).map(cb => cb.value),
-        radial: { show: document.getElementById('check-radial').checked, de: document.getElementById('radial-de').value, ate: document.getElementById('radial-ate').value, enc: document.getElementById('radial-encontrado').value },
-        axial: { show: document.getElementById('check-axial').checked, de: document.getElementById('axial-de').value, ate: document.getElementById('axial-ate').value, enc: document.getElementById('axial-encontrado').value }
+        radial: { 
+            show: document.getElementById('check-radial')?.checked || false, 
+            de: document.getElementById('radial-de')?.value || '', 
+            ate: document.getElementById('radial-ate')?.value || '', 
+            enc: document.getElementById('radial-encontrado')?.value || '' 
+        },
+        axial: { 
+            show: document.getElementById('check-axial')?.checked || false, 
+            de: document.getElementById('axial-de')?.value || '', 
+            ate: document.getElementById('axial-ate')?.value || '', 
+            enc: document.getElementById('axial-encontrado')?.value || '' 
+        }
     };
 
     const logos = {
@@ -212,43 +222,57 @@ async function preparePDFData() {
         </div>
     `;
 
-    const canvas = await html2canvas(document.getElementById('capture-area'), {
-        scale: 3,
-        logging: false,
+    console.log('Gerando Canvas...');
+    const captureEl = document.getElementById('capture-area');
+    if(!captureEl) throw new Error("Área de captura não encontrada");
+
+    const canvas = await html2canvas(captureEl, {
+        scale: 2, // Reduzido de 3 para 2 para economizar memória
+        logging: true,
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        imageTimeout: 15000
     });
 
+    console.log('Canvas gerado. Criando PDF...');
     const pdf = new jsPDF('p', 'mm', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-    const imgData = canvas.toDataURL('image/jpeg', 0.95);
+    const imgData = canvas.toDataURL('image/jpeg', 0.85); // Compressão em 85%
     
-    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+    console.log('PDF pronto!');
     return { pdf, filename: `Relatorio_${formData.relatorioNumero || 'Final'}.pdf` };
 }
 
 async function generatePDF() {
-    const btn = document.querySelector('.generate-btn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Processando...';
-    btn.disabled = true;
+    const btn = document.querySelector('.btn-secondary') || document.querySelector('.top-app-bar span[onclick*="generatePDF"]');
+    const originalText = btn ? btn.textContent : '';
+    if(btn) {
+        btn.textContent = btn.tagName === 'SPAN' ? 'hourglass_empty' : 'Processando...';
+        btn.disabled = true;
+    }
 
     try {
+        console.log('Iniciando geração...');
         const { pdf, filename } = await preparePDFData();
+        console.log('Salvando...');
         pdf.save(filename);
-        alert('Relatório salvo no celular!');
+        alert('Relatório salvo com sucesso!');
     } catch (error) {
-        console.error('Erro:', error);
-        alert('Erro ao gerar PDF.');
+        console.error('Erro detalhado:', error);
+        alert('Erro ao gerar PDF: ' + error.message);
     } finally {
-        btn.textContent = originalText;
-        btn.disabled = false;
+        if(btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
     }
 }
 
 async function generateAndShare(type = 'share') {
-    const btn = document.querySelector(type === 'email' ? '.email-btn' : '.share-btn');
+    const buttons = document.querySelectorAll('.btn-primary');
+    const btn = type === 'email' ? buttons[1] : buttons[0];
     const originalText = btn.textContent;
     btn.textContent = 'Gerando...';
     btn.disabled = true;

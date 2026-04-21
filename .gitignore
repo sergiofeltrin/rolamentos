@@ -1,0 +1,6 @@
+node_modules/
+android/
+.gradle/
+capacitor-cordova-android-plugins/
+package-lock.json
+*.log
