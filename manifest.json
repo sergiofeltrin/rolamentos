@@ -1,17 +1,22 @@
 {
-  "name": "Check Rolamento",
-  "short_name": "CheckRol",
-  "description": "App para inspeção de rolamentos ISO 15243",
+  "name": "VibWave Rolamentos",
+  "short_name": "VibWave",
+  "description": "Inspeção Técnica de Rolamentos ISO 15243",
   "start_url": "./index.html",
   "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#020617",
+  "theme_color": "#020617",
   "icons": [
     {
       "src": "logo_app.png",
-      "sizes": "512x512 1024x1024",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_app.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
