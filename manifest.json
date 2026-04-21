@@ -1,0 +1,19 @@
+{
+  "name": "Check Rolamento",
+  "short_name": "CheckRol",
+  "description": "App para inspeção de rolamentos ISO 15243",
+  "start_url": "./index.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "logo_app.png",
+      "sizes": "512x512 1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
