@@ -147,7 +147,7 @@ async function preparePDFData() {
     
     const formData = {
         relatorioNumero: document.getElementById('relatorio-numero')?.value || '',
-        data: document.getElementById('data-elaboracao')?.value || '',
+        data: (document.getElementById('data-elaboracao')?.value || '').split('-').reverse().join('-'),
         equipamento: document.getElementById('equipamento')?.value || '',
         bioparque: document.getElementById('bioparque')?.value || '',
         designacao: document.getElementById('designacao')?.value || '',
