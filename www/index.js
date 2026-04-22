@@ -131,8 +131,8 @@ async function preparePDFData() {
     if(formData.condicao === 'descartar') conditionColor = '#dc3545';
 
     template.innerHTML = `
-        <div id="capture-area" style="width: 794px; padding: 0px; box-sizing: border-box; font-family: 'Helvetica', Arial, sans-serif; background: white; margin: 0 auto; overflow: hidden;">
-            <div style="padding: 10px 0; width: 100%;">
+        <div id="capture-area" style="width: 794px; padding: 35px; box-sizing: border-box; font-family: 'Helvetica', Arial, sans-serif; background: white; margin: 0 auto; overflow: hidden;">
+            <div style="width: 100%;">
                 <div style="border: 1px solid ${borderColor}; padding: 10px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                     <div style="width: 155px; height: 75px; display: flex; align-items: center; justify-content: center;">
                         ${logos.left ? `<img src="${logos.left}" style="max-height: 100%; max-width: 100%; object-fit: contain;">` : ''}
