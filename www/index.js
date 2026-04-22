@@ -36,7 +36,10 @@ window.addEventListener('DOMContentLoaded', () => {
     if(leftLogo) restoreLogo(leftLogo, 'logo-left-container');
     if(rightLogo) restoreLogo(rightLogo, 'logo-right-container');
 
-    // Força o preenchimento dos campos padrão caso o HTML esteja em cache
+    // Carrega dados salvos anteriormente
+    loadFormData();
+
+    // Força o preenchimento dos campos padrão caso o HTML esteja em cache e não haja dados salvos
     const detalhes = document.getElementById('detalhes-inspecao');
     const sugestoes = document.getElementById('sugestoes-recomendacoes');
 
@@ -46,7 +49,70 @@ window.addEventListener('DOMContentLoaded', () => {
     if (sugestoes && !sugestoes.value.trim()) {
         sugestoes.value = "Utilizar a bucha cônica e rolamento na montagem atual.\nRealizar lavagem do rolamento em sua totalidade, realizar secagem total e aplicação de óleo protetivo.\nArmazenar em local coerente livre de poeiras e agentes externos.";
     }
+
+    // Adiciona listener para salvar automaticamente ao digitar/mudar qualquer campo
+    const form = document.getElementById('inspection-form');
+    if (form) {
+        form.addEventListener('input', saveFormData);
+    }
 });
+
+function saveFormData() {
+    const form = document.getElementById('inspection-form');
+    if (!form) return;
+    const data = {};
+    
+    const inputs = form.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        if (!input.id || input.type === 'file') return;
+        if (input.type === 'checkbox') {
+            data[input.id] = input.checked;
+        } else {
+            data[input.id] = input.value;
+        }
+    });
+
+    // Salva as falhas (checkboxes com mesmo name) separadamente
+    const falhas = Array.from(document.querySelectorAll('input[name="falha"]:checked')).map(cb => cb.value);
+    localStorage.setItem('inspection-falhas', JSON.stringify(falhas));
+    localStorage.setItem('inspection-form-data', JSON.stringify(data));
+}
+
+function loadFormData() {
+    const dataStr = localStorage.getItem('inspection-form-data');
+    if (dataStr) {
+        try {
+            const data = JSON.parse(dataStr);
+            Object.keys(data).forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    if (input.type === 'checkbox') {
+                        input.checked = data[id];
+                    } else {
+                        input.value = data[id];
+                    }
+                }
+            });
+        } catch (e) {
+            console.error("Erro ao carregar dados do formulário:", e);
+        }
+    }
+
+    const falhasStr = localStorage.getItem('inspection-falhas');
+    if (falhasStr) {
+        try {
+            const falhas = JSON.parse(falhasStr);
+            document.querySelectorAll('input[name="falha"]').forEach(cb => {
+                cb.checked = falhas.includes(cb.value);
+            });
+        } catch (e) {
+            console.error("Erro ao carregar falhas:", e);
+        }
+    }
+    
+    // Atualiza a UI baseada nos dados carregados
+    if (typeof toggleDimensionalRow === 'function') toggleDimensionalRow();
+}
 
 function restoreLogo(data, containerId) {
     const container = document.getElementById(containerId);
