@@ -271,8 +271,10 @@ async function generatePDF() {
 }
 
 async function generateAndShare(type = 'share') {
-    const buttons = document.querySelectorAll('.btn-primary');
-    const btn = type === 'email' ? buttons[1] : buttons[0];
+    const buttons = document.querySelectorAll('.bottom-actions button');
+    const btn = type === 'email' ? buttons[0] : buttons[1];
+    if (!btn) return;
+
     const originalText = btn.textContent;
     btn.textContent = 'Gerando...';
     btn.disabled = true;
@@ -282,6 +284,7 @@ async function generateAndShare(type = 'share') {
         const pdfBlob = pdf.output('blob');
         const file = new File([pdfBlob], filename, { type: 'application/pdf' });
 
+        // Tenta usar a API Web Share (funciona bem em dispositivos móveis modernos)
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
                 files: [file],
@@ -289,17 +292,19 @@ async function generateAndShare(type = 'share') {
                 text: 'Segue em anexo o relatório de inspeção de rolamento.'
             });
         } else {
-            // Fallback for email or unsupported share
+            // Fallback para quando o compartilhamento de arquivos não é suportado (ex: PC)
+            pdf.save(filename); // Garante que o usuário tenha o arquivo
+            
             if(type === 'email') {
-                window.location.href = `mailto:?subject=Relatório de Inspeção ${filename}&body=Segue em anexo o relatório.`;
+                const mailtoLink = `mailto:?subject=Relatório de Inspeção - ${filename}&body=Olá, o relatório foi gerado e salvo em seu dispositivo. Por favor, anexe-o a este e-mail.`;
+                window.location.href = mailtoLink;
             } else {
-                pdf.save(filename);
-                alert('Compartilhamento direto não suportado. O relatório foi salvo.');
+                alert('Compartilhamento direto não suportado neste navegador. O PDF foi baixado automaticamente. Você pode enviá-lo manualmente pelo WhatsApp.');
             }
         }
     } catch (error) {
         console.error('Erro:', error);
-        alert('Erro ao compartilhar.');
+        alert('Erro ao processar relatório: ' + error.message);
     } finally {
         btn.textContent = originalText;
         btn.disabled = false;
