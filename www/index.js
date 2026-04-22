@@ -35,6 +35,17 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     if(leftLogo) restoreLogo(leftLogo, 'logo-left-container');
     if(rightLogo) restoreLogo(rightLogo, 'logo-right-container');
+
+    // Força o preenchimento dos campos padrão caso o HTML esteja em cache
+    const detalhes = document.getElementById('detalhes-inspecao');
+    const sugestoes = document.getElementById('sugestoes-recomendacoes');
+
+    if (detalhes && !detalhes.value.trim()) {
+        detalhes.value = "Item 1 - Faces preservadas; Item 2 - Anel externo íntegro; Item 3 - Pista interna íntegra; Item 4 - Gaiolas preservadas; Item 5 – carreira de rolos íntegra; Item 6: Bucha preservada; Item 7 - O rolamento e bucha poderá ser montado novamente;";
+    }
+    if (sugestoes && !sugestoes.value.trim()) {
+        sugestoes.value = "Utilizar a bucha cônica e rolamento na montagem atual.\nRealizar lavagem do rolamento em sua totalidade, realizar secagem total e aplicação de óleo protetivo.\nArmazenar em local coerente livre de poeiras e agentes externos.";
+    }
 });
 
 function restoreLogo(data, containerId) {
